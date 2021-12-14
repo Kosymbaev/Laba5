@@ -106,7 +106,7 @@ public class MainFrame extends JFrame {
 
         Action showGridAction= new AbstractAction("Показывать сетку"){
             public void actionPerformed(ActionEvent event){
-
+                display.setShowGrid(showGridMenuItem.isSelected());
             }
         };
         showGridMenuItem = new JCheckBoxMenuItem(showGridAction);
