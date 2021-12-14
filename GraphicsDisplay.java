@@ -39,6 +39,16 @@ public class GraphicsDisplay extends JPanel {
     private final BasicStroke gridStroke;
     private final BasicStroke axisStroke;
     private final BasicStroke markerStroke;
+
+    class GraphPoint {
+        double xd;
+        double yd;
+        int x;
+        int y;
+        int n;
+    }
+    private GraphPoint SMP;
+
     // Различные шрифты отображения надписей
     private final Font axisFont;
 
@@ -337,7 +347,40 @@ minY
 
 
     public class MouseMotionHandler implements MouseMotionListener, MouseListener {
+        private double comparePoint(Point p1, Point p2) {
+            return Math.sqrt(Math.pow(p1.x - p2.x, 2)
+                    + Math.pow(p1.y - p2.y, 2));
+        }
 
+        private GraphPoint find(int x, int y) {
+            GraphPoint smp = new GraphPoint();
+            GraphPoint smp2 = new GraphPoint();
+            double r, r2 = 1000;
+            if (graphicsData!=null) {
+                for (int i = 0; i < graphicsData.length; i++) {
+                    Point p = new Point();
+                    p.x = x;
+                    p.y = y;
+                    Point p2 = new Point();
+                    p2.x = graphicsDataI[i][0];
+                    p2.y = graphicsDataI[i][1];
+                    r = comparePoint(p, p2);
+                    if (r < 30.0) {
+                        smp.x = graphicsDataI[i][0];
+                        smp.y = graphicsDataI[i][1];
+                        smp.xd = graphicsData[i][0];
+                        smp.yd = graphicsData[i][1];
+                        smp.n = i;
+                        if (r < r2) {
+                            r2 = r;
+                            smp2 = smp;
+                        }
+                        return smp2;
+                    }
+                }
+            }
+            return null;
+        }
 
 
 
@@ -373,7 +416,17 @@ minY
 
         @Override
         public void mouseMoved(MouseEvent e) {
-
+            if(e!=null){
+                GraphPoint smp;
+                smp = find(e.getX(), e.getY());
+                if (smp != null) {
+                    setCursor(Cursor.getPredefinedCursor(0));
+                    SMP = smp;
+                } else {
+                    SMP = null;
+                }
+                repaint();
+            }
         }
     }
 
